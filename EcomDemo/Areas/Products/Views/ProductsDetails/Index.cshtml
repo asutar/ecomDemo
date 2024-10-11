@@ -1,0 +1,375 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+    .navbar-dark .navbar-brand, .navbar-dark .navbar-brand:focus, .navbar-dark .navbar-brand:hover, .navbar-dark .navbar-nav .nav-link {
+        color: black;
+    }
+
+    .navbar-dark .btn-link {
+        color: #fff;
+    }
+    #imagePreview img {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
+    image-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-container img {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
+    #imageUploadModal {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        border: 1px solid #ccc;
+        background: #fff;
+        z-index: 1000;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    .remove-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<div class="container-fluid" style="padding: 72px;">
+    <div class="row">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab1">Active</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2">Variations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab3">Uploads</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#tab4" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+        </ul>
+        <div class="tab-content mt-3">
+            <div class="tab-pane active" id="tab1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            @*<div class="card-header">
+                                </div>*@
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <b>Category<span class="text-danger">*</span></b>
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <select class="form-select" name="ddlCategory" id="ddlCategory"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <b>Sub Category<span class="text-danger">*</span></b>
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <select class="form-select" name="ddlSubCategory" id="ddlSubCategory"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <b>Brand<span class="text-danger">*</span></b>
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="text" class="form-control" placeholder="Brand" id="txtBrand" required="" data-parsley-trigger="focusout">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <b>Product Title<span class="text-danger">*</span></b>
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="text" class="form-control" placeholder="Product Title" id="txtProductTitle" required="" data-parsley-trigger="focusout">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <b>Gender<span class="text-danger">*</span></b>
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <select class="form-select" name="ddlGender" id="ddlGender">
+                                                    <option value="1">Male</option>
+                                                    <option value="2">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="productTable" class="display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Variation ID</th>
+                                            <th>Size</th>
+                                            <th>Color</th>
+                                            <th>Quantity</th>
+                                            <th>MRP</th>
+                                            <th>Price</th>
+                                            <th>Images</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <button id="addNewRow" class="btn"><i class="fas fa-plus"></i> Add New Row</button>
+                                <!-- Image Upload Modal -->
+                                <div id="modalOverlay"></div>
+                                <div id="imageUploadModal">
+                                    <h3>Upload Images</h3>
+                                    <input type="file" id="fileUploader" multiple>
+                                    <div id="imagePreview"></div>
+                                    <button id="saveImages" class="btn"><i class="fas fa-save"></i> Save Images</button>
+                                    <button id="closeModal" class="btn"><i class="fas fa-times"></i> Close</button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab3">
+                <h3>We applied clearfix to the tab-content to get rid of the gap between the tab and the content</h3>
+            </div>
+            <div class="tab-pane fade" id="tab4">
+                <h3>We use CSS to change the background color of the content to be equal to the tab</h3>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script>
+        let table;
+        let productData = [];
+        let variationCounter = 1;
+        let imageUploads = {};
+
+        $(document).ready(function () {
+            // Initialize DataTable
+            table = $('#productTable').DataTable();
+
+            // Add new row button click
+            $('#addNewRow').click(function () {
+                let newRow = table.row.add([
+                    variationCounter++,
+                    `<select class='sizeDropdown'><option>S</option><option>M</option><option>L</option><option>XL</option></select>`,
+                    `<select class='colorDropdown'><option>Red</option><option>Blue</option><option>Green</option><option>Black</option></select>`,
+                    `<input type='number' class='qtyTextbox' min='1'/>`,
+                    `<input type='number' class='mrpTextbox' min='0'/>`,
+                    `<input type='number' class='priceTextbox' min='0'/>`,
+                    `<div class='image-container' data-row-id='${variationCounter - 1}'></div>`, // Image container
+                    `<button class='saveRowBtn'><i class='fas fa-save'></i></button>
+                     <button class='deleteRowBtn'><i class='fas fa-trash'></i></button>
+                     <button class='uploadImagesBtn'><i class='fas fa-file-upload'></i></button>`
+                ]).draw().node();
+
+                $(newRow).attr('data-id', variationCounter - 1);
+            });
+
+            // Row button actions (delegated event handlers)
+            $('#productTable tbody').on('click', '.saveRowBtn', function () {
+                let row = $(this).closest('tr');
+                saveRow(row);
+            });
+
+            $('#productTable tbody').on('click', '.deleteRowBtn', function () {
+                let row = $(this).closest('tr');
+                deleteRow(row);
+            });
+
+            $('#productTable tbody').on('click', '.uploadImagesBtn', function () {
+                let row = $(this).closest('tr');
+                let rowId = row.attr('data-id');
+                openImageUploadModal(rowId);
+            });
+
+            // Image upload modal actions
+            $('#saveImages').click(function () {
+                saveUploadedImages();
+            });
+
+            $('#closeModal').click(function () {
+                closeModal();
+            });
+        });
+
+        // Save row data to memory (productData array)
+        function saveRow(row) {
+            let rowData = {
+                VariationId: row.find('td:eq(0)').text(),
+                Size: row.find('.sizeDropdown').val(),
+                Color: row.find('.colorDropdown').val(),
+                Quantity: row.find('.qtyTextbox').val(),
+                MRP: row.find('.mrpTextbox').val(),
+                Price: row.find('.priceTextbox').val(),
+                Images: imageUploads[row.find('td:eq(0)').text()] || [] // Get uploaded images
+            };
+
+            // Find if row already exists, else add new
+            let existingRowIndex = productData.findIndex(p => p.VariationId == rowData.VariationId);
+            if (existingRowIndex > -1) {
+                productData[existingRowIndex] = rowData;
+            } else {
+                productData.push(rowData);
+            }
+
+            console.log('Current Product Data:', productData);
+            alert('Row saved successfully!');
+        }
+
+        // Delete row from memory and DataTable
+        function deleteRow(row) {
+            let variationId = row.find('td:eq(0)').text();
+            productData = productData.filter(p => p.VariationId != variationId);
+            delete imageUploads[variationId]; // Remove images associated with this row
+            console.log('Updated Product Data after deletion:', productData);
+            table.row(row).remove().draw();
+        }
+
+        // Open image upload modal and set context to specific row
+        function openImageUploadModal(rowId) {
+            $('#imageUploadModal').attr('data-row-id', rowId);
+            $('#modalOverlay, #imageUploadModal').fadeIn();
+            $('#fileUploader').val(''); // Clear previous selection
+            $('#imagePreview').empty(); // Clear previous previews
+
+            // Load existing images if any
+            if (imageUploads[rowId]) {
+                for (let imgSrc of imageUploads[rowId]) {
+                    $('#imagePreview').append(createImageElement(imgSrc, rowId));
+                }
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload() {
+            let rowId = $('#imageUploadModal').attr('data-row-id');
+            let files = $('#fileUploader')[0].files;
+
+            // Store the uploaded files and generate preview
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    let fileReader = new FileReader();
+                    fileReader.onload = function (e) {
+                        $('#imagePreview').append(createImageElement(e.target.result, rowId));
+                        imageUploads[rowId] = imageUploads[rowId] || [];
+                        imageUploads[rowId].push(e.target.result); // Store image for this row
+                    };
+                    fileReader.readAsDataURL(files[i]);
+                }
+            }
+        }
+
+        // Create image element with remove button
+        function createImageElement(src, rowId) {
+            return `
+                <div class='image-container'>
+                    <img src='${src}' style='width:38px;height:27px;padding:2px;' alt='Uploaded Image' />
+                    <button class='remove-button' onclick='removeImage("${src}", "${rowId}", this)'>
+                        <i class='fas fa-times'></i>
+                    </button>
+                </div>`;
+        }
+
+        // Handle save uploaded images for the specific row
+        function saveUploadedImages() {
+            let rowId = $('#imageUploadModal').attr('data-row-id');
+            let files = $('#fileUploader')[0].files;
+            let previewContainer = $('#imagePreview');
+            //previewContainer.empty();
+
+            imageUploads[rowId] = imageUploads[rowId] || []; // Initialize images array for this row
+
+            // Store the uploaded files and generate preview
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    let fileReader = new FileReader();
+                    fileReader.onload = function (e) {
+                        previewContainer.append(`<img style='width:38px;height:27px;padding:2px;' src='${e.target.result}' alt='Image ${i + 1}' data-src='${e.target.result}' onclick='removeImage(this)' />`);
+                        imageUploads[rowId].push(e.target.result);
+                        updateRowImages(rowId);
+                    };
+                    fileReader.readAsDataURL(files[i]);
+                }
+            }
+
+            alert('Images saved successfully!');
+        }
+        // Close modal function
+        function closeModal() {
+            $('#modalOverlay, #imageUploadModal').fadeOut();
+            $('#imagePreview').empty(); // Clear preview on close
+            $('#fileUploader').val(''); // Clear file input
+        }
+        // Remove selected image from the preview and memory
+        function removeImage(imageElement) {
+            let rowId = $('#imageUploadModal').attr('data-row-id');
+            let src = $(imageElement).attr('data-src');
+            imageUploads[rowId] = imageUploads[rowId].filter(img => img !== src);
+            $(imageElement).remove(); // Remove from the preview
+        }
+        // Update row images after upload
+        function updateRowImages(rowId) {
+            let row = $(`.image-container[data-row-id='${rowId}']`);
+            row.empty(); // Clear existing images
+            let images = imageUploads[rowId] || [];
+
+            // Add images as thumbnails in the row
+            images.forEach((imgSrc, index) => {
+                row.append(`<img style='width:38px;height:27px;padding:2px;' src='${imgSrc}' alt='Image ${index + 1}' />`);
+            });
+        }
+    </script>
+}

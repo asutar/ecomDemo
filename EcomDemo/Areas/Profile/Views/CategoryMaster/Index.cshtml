@@ -1,0 +1,93 @@
+﻿@model List<EcomDemo.Areas.Profile.Models.Category>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+    .navbar-dark .navbar-brand, .navbar-dark .navbar-brand:focus, .navbar-dark .navbar-brand:hover, .navbar-dark .navbar-nav .nav-link {
+        color: black;
+    }
+
+    .navbar-dark .btn-link {
+        color: #fff;
+    }
+</style>
+<div class="container-fluid" style="padding: 72px;">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Create Category</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Create Form -->
+                 
+                    @using (Html.BeginForm("Create", "CategoryMaster", FormMethod.Post))
+                    {
+                        @*<form asp-action="Create" asp-controller="CategoryMaster" asp-area="Profile" method="post">*@
+                        <div class="form-group">
+                            <label for="CATEGORY_DESCRIPTION">Description</label>
+                            <input type="text" class="form-control" id="CATEGORY_DESCRIPTION" name="CATEGORY_DESCRIPTION" required />
+                        </div>
+                        <button type="submit" class="btn btn-success">Create</button>
+                        @*</form>*@
+                    }
+
+                </div>
+            </div>
+                </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Display Categories -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model)
+                            {
+                                <tr>
+                                    <td>@category.CATEGORY_ID</td>
+                                    <td>@category.CATEGORY_DESCRIPTION</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <!-- Edit Form -->
+                                                @*<form asp-action="Edit" method="post" style="display:inline">*@
+                                                @using (Html.BeginForm("Edit", "CategoryMaster", FormMethod.Post))
+                                                {
+                                                    <input type="hidden" name="CATEGORY_ID" value="@category.CATEGORY_ID" />
+                                                    <input type="text" name="CATEGORY_DESCRIPTION" value="@category.CATEGORY_DESCRIPTION" />
+                                                    <input type="submit" value="Edit" class="btn btn-primary" />
+                                                    @*</form>*@
+                                                }
+                                                @using (Html.BeginForm("Delete", "CategoryMaster", FormMethod.Post))
+                                                {<!-- Delete Form -->
+                                                    @*<form asp-action="Delete" method="post" style="display:inline">*@
+                                                    <input type="hidden" name="id" value="@category.CATEGORY_ID" />
+                                                    <input type="submit" value="Delete" class="btn btn-danger" />
+                                                    @*</form>*@
+                                                }
+                                            </div>
+                                        </div>
+                                       
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+           
+
+          
